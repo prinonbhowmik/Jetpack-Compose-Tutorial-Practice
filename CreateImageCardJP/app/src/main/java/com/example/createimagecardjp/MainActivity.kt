@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,13 +40,22 @@ class MainActivity : ComponentActivity() {
             val painter = painterResource(id = R.drawable.shoccho)
             val description = "Im Shoccho, I'm 10, I'm in class six,"
             val title = "Hi, This shoccho"
-            Box (modifier = Modifier.fillMaxWidth(0.5f))
-            {
-                ImageCard(
-                    painter = painter,
-                    contentDescription = description,
-                    title = title)
-            }
+           Row(
+               verticalAlignment = Alignment.CenterVertically
+           ) {
+               Box (modifier = Modifier
+                   .fillMaxWidth(0.5f)
+                   .padding(16.dp)
+                   .background(Color.Transparent)
+               )
+               {
+                   ImageCard(
+                       painter = painter,
+                       contentDescription = description,
+                       title = title
+                   )
+               }
+           }
 
 
         }
@@ -80,7 +92,7 @@ fun ImageCard(
                 ){
                 Text(
                     title,
-                    style = TextStyle(color = Color.White,
+                    style = TextStyle(color = Color.Black,
                         fontSize = 16.sp)
                 )
             }
