@@ -20,11 +20,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -92,7 +95,8 @@ class MainActivity : ComponentActivity() {
                             Icon(Icons.Default.Add, contentDescription = "Add")
                         }
                     }
-                ) { innerPadding ->
+                ) {
+                    innerPadding ->
                     Column(
                         modifier = Modifier
                             .padding(innerPadding),
@@ -102,9 +106,27 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(8.dp),
                             text = " You have pressed the floating action button $presses times.",
                         )
+                        ShowSwitch()
                     }
+
                 }
             }
         }
+    }
+
+    @Composable
+    private fun ShowSwitch() {
+        val isChecked = remember { mutableStateOf(true) }
+
+        Switch(
+            checked = isChecked.value,
+            onCheckedChange = {
+                isChecked.value = it
+            },
+            modifier = Modifier.run {
+                size(20.dp)
+                padding(10.dp)
+            }
+        )
     }
 }
