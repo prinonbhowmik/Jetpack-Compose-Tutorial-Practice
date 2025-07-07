@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.login_ui_jp.ui.theme.Login_Ui_JPTheme
 
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+@Preview(showBackground = true)
 @Composable
 fun Login() {
     Column(
@@ -133,13 +134,13 @@ fun TextInput(inputType: InputType) {
         modifier = Modifier.fillMaxWidth(),
         leadingIcon = { Icon(imageVector = inputType.icon,
             null,)},
-        label =  { Text(text = inputType.label)},
+        label =  { Text(text = inputType.label, color = Color.Black)},
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            containerColor = Color.White
+            containerColor = Color.White,
         ),
         singleLine = true,
         keyboardOptions = inputType.keyboardOptions,

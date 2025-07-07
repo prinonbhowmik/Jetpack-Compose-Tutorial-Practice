@@ -1,9 +1,11 @@
 package com.example.recyclerviewjp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +32,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.recyclerviewjp.Data.Contact
 import com.example.recyclerviewjp.ui.theme.RecyclerViewJPTheme
+import androidx.core.net.toUri
 
 class MainActivity : ComponentActivity() {
 
@@ -93,7 +100,7 @@ class MainActivity : ComponentActivity() {
                         Text(text = user.contactNo,modifier = Modifier.padding(8.dp))
                     }
                     IconButton(onClick = {
-                        val u = Uri.parse("tel:" + user.contactNo)
+                        val u = ("tel:" + user.contactNo).toUri()
                         val i = Intent(Intent.ACTION_DIAL, u)
                         startActivity(i)
                     }, modifier = Modifier.align(alignment = Alignment.CenterVertically)) {
