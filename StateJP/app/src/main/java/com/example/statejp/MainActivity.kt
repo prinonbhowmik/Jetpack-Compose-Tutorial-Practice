@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.statejp.ui.theme.StateJPTheme
 
@@ -27,27 +25,30 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: MainViewModel = MainViewModel()) {
+    val newNameStateContent = viewModel.textFieldState.observeAsState("")
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        GreetingList()
+        GreetingMessage(
+            newNameStateContent.value
+        ) { newName -> viewModel.onTextChanged(newName) }
     }
 }
 
 @Composable
-fun GreetingList() {
-    val greetingListState = remember { mutableStateListOf<String>("Prinon", "Prithul") }
-    for(name in greetingListState) {
-        Greeting(name = name)
-    }
+fun GreetingMessage(
+    textFieldValue: String,
+    textFieldUpdate: (newName: String) -> Unit
+) {
 
-    Button(onClick = { greetingListState.add("Arpita") }) {
-        Text("Add new name")
+    TextField(value = textFieldValue, onValueChange = textFieldUpdate)
+    Button(onClick = { }) {
+        Text("$textFieldValue")
     }
 }
 
@@ -55,7 +56,7 @@ fun GreetingList() {
 fun Greeting(name: String) {
     Text(
         text = "Hello $name!",
-        style = MaterialTheme.typography.bodyMedium
+        style = MaterialTheme.typography.headlineSmall
     )
 }
 
