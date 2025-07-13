@@ -63,6 +63,13 @@ dependencies {
     implementation ("androidx.compose.ui:ui:1.6.0")
     implementation ("androidx.navigation:navigation-compose:2.7.5")
 
+    // Lifecycle ViewModel + LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    // Jetpack Compose
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.3")
+
+
 // Hilt
 
     val hiltVersion = "2.56"

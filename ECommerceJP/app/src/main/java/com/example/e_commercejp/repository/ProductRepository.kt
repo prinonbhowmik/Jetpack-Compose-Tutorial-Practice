@@ -1,5 +1,6 @@
 package com.example.e_commercejp.repository
 
+import com.example.e_commercejp.Resource
 import com.example.e_commercejp.data.ApiService
 import com.example.e_commercejp.data.Product
 import javax.inject.Inject
