@@ -63,6 +63,7 @@ dependencies {
     // Jetpack Compose
     implementation ("androidx.compose.ui:ui:1.6.0")
     implementation ("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.compose.foundation:foundation:1.6.1")
 
     // Lifecycle ViewModel + LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
@@ -95,6 +96,23 @@ dependencies {
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
 
+
+
+// Core ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:1.7.1")
+
+    // UI components for ExoPlayer
+    implementation("androidx.media3:media3-ui:1.7.1")
+
+    // Optional: HLS support
+    implementation("androidx.media3:media3-exoplayer-hls:1.3.0")
+
+    // Optional: Common utilities
+    implementation("androidx.media3:media3-common:1.7.1")
+
+    implementation("androidx.compose.foundation:foundation:1.8.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
 
 
 }

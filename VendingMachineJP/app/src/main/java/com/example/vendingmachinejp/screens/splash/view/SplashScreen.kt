@@ -13,10 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +21,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.vendingmachinejp.models.Media
 import com.example.vendingmachinejp.navigation.Screen
-import com.example.vendingmachinejp.utils.DataStorePref
 import com.example.vendingmachinejp.screens.splash.viewmodel.SplashViewModel
+import com.example.vendingmachinejp.screens.videoItems.model.ReelsVideoData
+import com.example.vendingmachinejp.screens.videoItems.view.AutoPlayVideoLazyRow
+import com.example.vendingmachinejp.utils.DataStorePref
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -39,21 +38,29 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
     val isLoading = viewModel.isLoading
     val error = viewModel.errorMessage
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    var adList =  mutableListOf<Media>()
+    var adList =  mutableListOf<ReelsVideoData>()
+
+    val pref = DataStorePref(context)
 
     LaunchedEffect(Unit) {
 
-        val pref = DataStorePref(context)
+
 
         if (pref.kioskAdded()){
-            viewModel.getAdList(
-                "c0d8c6f8045c45c68e7e159de76f4067",
-                "5fc889aee02448afa4b9af5f766c5b74",
-                "afa32ac3-7faf-4048-b7e2-3be079f2d04a",
-                "8F040955-8038-49D7-93E1-6A9C3B4F9EEC",
-                30.toString(),1.toString()
-            )
+            coroutineScope.launch {
+                pref.apply {
+                    viewModel.getAdList(
+
+                        getAPIKey(),
+                        getBranchId(),
+                        getOrgId(),
+                        getTenantId(),
+                        30.toString(),1.toString()
+                    )
+                }
+            }
         }else{
             navController.navigate(Screen.addKiosk.route){
                 popUpTo(navController.graph.id){
@@ -82,13 +89,20 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
             ) {
                 Text(text = error, color = Color.Red)
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = { viewModel.getAdList(
-                    "c0d8c6f8045c45c68e7e159de76f4067",
-                    "5fc889aee02448afa4b9af5f766c5b74",
-                    "afa32ac3-7faf-4048-b7e2-3be079f2d04a",
-                    "8F040955-8038-49D7-93E1-6A9C3B4F9EEC",
-                    30.toString(),1.toString()
-                )}) {
+                Button(onClick = {
+                    coroutineScope.launch {
+                       pref.apply {
+                           viewModel.getAdList(
+
+                               getAPIKey(),
+                               getBranchId(),
+                               getOrgId(),
+                               getTenantId(),
+                               30.toString(),1.toString()
+                           )
+                       }
+                    }
+                }) {
                     Text("Retry")
                 }
             }
@@ -97,9 +111,20 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
         adData != null -> {
             Log.d("AdList", "SplashScreen: ${Gson().toJson(adData.data?.data)}")
 
+            adData.data?.data?.forEach {
+                it?.medias?.forEach {media ->
+                    if (media?.displaySection == "SPLASH_SCREEN"){
+                        adList.add(ReelsVideoData(media.fileUrl,media.mediaType))
+                    }
+                }
+            }
+
+            AutoPlayVideoLazyRow(adList,navController)
+
             
         }
     }
+
 
 
 }

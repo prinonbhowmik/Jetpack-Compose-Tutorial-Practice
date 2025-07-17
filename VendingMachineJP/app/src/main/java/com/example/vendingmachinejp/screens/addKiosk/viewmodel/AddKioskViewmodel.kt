@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vendingmachinejp.models.AdListModel
 import com.example.vendingmachinejp.repository.HomeRepository
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
 import com.example.vendingmachinejp.utils.DataState

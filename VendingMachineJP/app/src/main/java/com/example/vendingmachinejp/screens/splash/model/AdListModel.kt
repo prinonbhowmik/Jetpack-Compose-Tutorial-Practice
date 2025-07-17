@@ -1,4 +1,4 @@
-package com.example.vendingmachinejp.models
+package com.example.vendingmachinejp.screens.splash.model
 
 
 import com.google.gson.annotations.SerializedName

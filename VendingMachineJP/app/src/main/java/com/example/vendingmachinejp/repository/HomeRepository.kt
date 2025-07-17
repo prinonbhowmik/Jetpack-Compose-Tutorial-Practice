@@ -1,13 +1,12 @@
 package com.example.vendingmachinejp.repository
 
-import com.example.vendingmachinejp.models.AdListModel
+import com.example.vendingmachinejp.screens.splash.model.AdListModel
 import com.example.vendingmachinejp.retrofit.ApiInterface
 import com.example.vendingmachinejp.retrofit.ApiTerminal
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
 import com.example.vendingmachinejp.utils.DataState
 import okhttp3.RequestBody
 import retrofit2.HttpException
-import retrofit2.http.Body
 import java.io.IOException
 import javax.inject.Inject
 

@@ -5,11 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.vendingmachinejp.screens.addKiosk.view.AddKioskScreen
+import com.example.vendingmachinejp.screens.home.view.HomeScreen
 import com.example.vendingmachinejp.screens.splash.view.SplashScreen
 
 sealed class Screen(val route: String) {
     object splash : Screen("splash")
     object addKiosk : Screen("addKiosk")
+    object home : Screen("home")
 }
 
 @Composable
@@ -21,6 +23,10 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.addKiosk.route) { backStackEntry ->
 
             AddKioskScreen(navController)
+        }
+        composable(Screen.home.route) { backStackEntry ->
+
+            HomeScreen(navController)
         }
 
     }

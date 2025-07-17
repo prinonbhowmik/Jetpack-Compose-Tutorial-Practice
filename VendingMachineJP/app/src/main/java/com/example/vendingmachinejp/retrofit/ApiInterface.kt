@@ -1,8 +1,7 @@
 package com.example.vendingmachinejp.retrofit
 
 import com.example.vendingmachinejp.base.AppConstants
-import com.example.vendingmachinejp.models.AdListData
-import com.example.vendingmachinejp.models.AdListModel
+import com.example.vendingmachinejp.screens.splash.model.AdListModel
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

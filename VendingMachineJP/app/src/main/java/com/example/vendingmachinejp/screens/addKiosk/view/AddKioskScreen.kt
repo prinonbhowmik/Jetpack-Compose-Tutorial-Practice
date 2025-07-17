@@ -115,6 +115,7 @@ fun AddKioskScreen(navController: NavController,viewmodel: AddKioskViewmodel = h
                 pref.addAPIKey(kioskData.data?.apiKey.toString())
                 pref.addBranchId(kioskData.data?.branchUUID.toString())
                 pref.addOrgId(kioskData.data?.organizationId.toString())
+                pref.addTenantId(kioskData.data?.tenantId.toString())
 
                 navController.navigate(Screen.splash.route){
                     popUpTo(navController.graph.id){
