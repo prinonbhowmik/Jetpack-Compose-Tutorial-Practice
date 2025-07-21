@@ -4,6 +4,7 @@ import com.example.vendingmachinejp.screens.splash.model.AdListModel
 import com.example.vendingmachinejp.retrofit.ApiInterface
 import com.example.vendingmachinejp.retrofit.ApiTerminal
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
+import com.example.vendingmachinejp.screens.home.model.CategoryWiseProductModel
 import com.example.vendingmachinejp.utils.DataState
 import okhttp3.RequestBody
 import retrofit2.HttpException
@@ -79,12 +80,21 @@ class HomeRepository @Inject constructor(private val api: ApiInterface, private 
         type: String,
         productMediaRequest: String,
         isVendingMachine: Boolean,
-        /*branchIdQuery:String,
-        OrganizationIdQuery:String,*/
-    )  {
-        api.getHome(
-            apiKey, branchId, organizationId, tenantId, type, productMediaRequest,isVendingMachine)
-
+    ) : DataState<CategoryWiseProductModel>  {
+        return try {
+            val response = api.getHome(apiKey, branchId, organizationId, tenantId, type, productMediaRequest,isVendingMachine)
+            if (response.isSuccessful && response.body() != null) {
+                DataState.Success(response.body()!!)
+            } else {
+                DataState.Error("Error ${response.code()}: ${response.message()}")
+            }
+        } catch (e: IOException) {
+            DataState.Error("Network error: ${e.message}")
+        } catch (e: HttpException) {
+            DataState.Error("HTTP error: ${e.message}")
+        } catch (e: Exception) {
+            DataState.Error("Unknown error: ${e.message}")
+        }
     }
 
     suspend fun getSlots(

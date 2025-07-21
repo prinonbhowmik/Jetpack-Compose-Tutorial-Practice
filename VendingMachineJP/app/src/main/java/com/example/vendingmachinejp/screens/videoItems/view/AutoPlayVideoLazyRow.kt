@@ -15,13 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.navigation.NavController
 import com.example.vendingmachinejp.R
 import com.example.vendingmachinejp.navigation.Screen
 import com.example.vendingmachinejp.screens.videoItems.model.ReelsVideoData
 
 @Composable
-fun AutoPlayVideoLazyRow(videoUrls: List<ReelsVideoData>, navController: NavController) {
+fun AutoPlayVideoLazyRow(videoUrls: List<ReelsVideoData>, navController: NavController, customModifier: Modifier,clickable: Boolean) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
     var currentIndex by remember { mutableStateOf(0) }
@@ -32,7 +33,7 @@ fun AutoPlayVideoLazyRow(videoUrls: List<ReelsVideoData>, navController: NavCont
 
     LazyRow(
         state = listState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = customModifier,
         userScrollEnabled = false
 
     ) {
@@ -41,9 +42,11 @@ fun AutoPlayVideoLazyRow(videoUrls: List<ReelsVideoData>, navController: NavCont
                 modifier = Modifier
                     .fillParentMaxSize()
                     .clickable{
-                        val mp: MediaPlayer = MediaPlayer.create(context, R.raw.old_radio_button_click_97549)
-                        mp.start()
-                        navController.navigate(Screen.home.route)
+                        if (clickable){
+                            val mp: MediaPlayer = MediaPlayer.create(context, R.raw.old_radio_button_click_97549)
+                            mp.start()
+                            navController.navigate(Screen.home.route)
+                        }
                     }
             ) {
                 VideoPlayerItem(

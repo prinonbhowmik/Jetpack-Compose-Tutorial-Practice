@@ -3,6 +3,7 @@ package com.example.vendingmachinejp.retrofit
 import com.example.vendingmachinejp.base.AppConstants
 import com.example.vendingmachinejp.screens.splash.model.AdListModel
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
+import com.example.vendingmachinejp.screens.home.model.CategoryWiseProductModel
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -47,7 +48,7 @@ interface ApiInterface {
         @Query("IsVendingMachine") isVendingMachine: Boolean,
         /*@Query("BranchId") branchIdQuery:String,
         @Query("OrganizationId") OrganizationIdQuery:String,*/
-    ): Response<ResponseBody>
+    ): Response<CategoryWiseProductModel>
 
     @GET(AppConstants.ENDPOINT_SLOTS)
     suspend fun getProductSlots(

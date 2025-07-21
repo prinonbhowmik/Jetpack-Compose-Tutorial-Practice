@@ -83,7 +83,7 @@ fun VideoPlayerItem(
         }
     }
 
-    // ✅ Make sure this fills all space
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,7 +94,8 @@ fun VideoPlayerItem(
                 PlayerView(it).apply {
                     player = exoPlayer
                     useController = false
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM // ✅ fills screen
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT

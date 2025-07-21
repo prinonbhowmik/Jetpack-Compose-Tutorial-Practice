@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltViewModel()) {
+fun SplashScreen(navController: NavController, viewModel: SplashViewModel = hiltViewModel()) {
 
 
     val adData = viewModel.adData
@@ -40,15 +40,14 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    var adList =  mutableListOf<ReelsVideoData>()
+    var adList = mutableListOf<ReelsVideoData>()
 
     val pref = DataStorePref(context)
 
     LaunchedEffect(Unit) {
 
 
-
-        if (pref.kioskAdded()){
+        if (pref.kioskAdded()) {
             coroutineScope.launch {
                 pref.apply {
                     viewModel.getAdList(
@@ -57,13 +56,13 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
                         getBranchId(),
                         getOrgId(),
                         getTenantId(),
-                        30.toString(),1.toString()
+                        30.toString(), 1.toString()
                     )
                 }
             }
-        }else{
-            navController.navigate(Screen.addKiosk.route){
-                popUpTo(navController.graph.id){
+        } else {
+            navController.navigate(Screen.addKiosk.route) {
+                popUpTo(navController.graph.id) {
                     inclusive = true
                 }
             }
@@ -72,7 +71,7 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
 
     }
 
-    when{
+    when {
         isLoading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color.Red)
@@ -91,16 +90,16 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {
                     coroutineScope.launch {
-                       pref.apply {
-                           viewModel.getAdList(
+                        pref.apply {
+                            viewModel.getAdList(
 
-                               getAPIKey(),
-                               getBranchId(),
-                               getOrgId(),
-                               getTenantId(),
-                               30.toString(),1.toString()
-                           )
-                       }
+                                getAPIKey(),
+                                getBranchId(),
+                                getOrgId(),
+                                getTenantId(),
+                                30.toString(), 1.toString()
+                            )
+                        }
                     }
                 }) {
                     Text("Retry")
@@ -112,19 +111,19 @@ fun SplashScreen(navController: NavController,viewModel: SplashViewModel = hiltV
             Log.d("AdList", "SplashScreen: ${Gson().toJson(adData.data?.data)}")
 
             adData.data?.data?.forEach {
-                it?.medias?.forEach {media ->
-                    if (media?.displaySection == "SPLASH_SCREEN"){
-                        adList.add(ReelsVideoData(media.fileUrl,media.mediaType))
+                it?.medias?.forEach { media ->
+                    if (media?.displaySection == "SPLASH_SCREEN") {
+                        adList.add(ReelsVideoData(media.fileUrl, media.mediaType))
                     }
                 }
             }
 
-            AutoPlayVideoLazyRow(adList,navController)
 
-            
+            AutoPlayVideoLazyRow(adList, navController, customModifier = Modifier.fillMaxSize(),true)
+
+
         }
     }
-
 
 
 }

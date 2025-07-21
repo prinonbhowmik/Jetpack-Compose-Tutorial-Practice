@@ -26,4 +26,5 @@ object AppConstants {
     const val TENANT_ID = "8F040955-8038-49D7-93E1-6A9C3B4F9EEC"
     const val AUTHORIZED = "AUTHORIZED"
     const val MODULE = "VMAppModule"
+    const val TAKEAWAY = "Takeaway"
 }

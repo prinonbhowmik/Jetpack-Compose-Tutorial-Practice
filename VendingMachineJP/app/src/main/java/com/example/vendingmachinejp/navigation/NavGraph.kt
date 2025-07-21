@@ -18,6 +18,7 @@ sealed class Screen(val route: String) {
 fun NavGraph(navController: NavHostController) {
     NavHost(navController, startDestination = Screen.splash.route) {
         composable(Screen.splash.route) {
+
             SplashScreen(navController)
         }
         composable(Screen.addKiosk.route) { backStackEntry ->
