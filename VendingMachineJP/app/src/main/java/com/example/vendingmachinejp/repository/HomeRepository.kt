@@ -5,6 +5,7 @@ import com.example.vendingmachinejp.retrofit.ApiInterface
 import com.example.vendingmachinejp.retrofit.ApiTerminal
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
 import com.example.vendingmachinejp.screens.home.model.CategoryWiseProductModel
+import com.example.vendingmachinejp.screens.splash.model.BrandInfoModel
 import com.example.vendingmachinejp.utils.DataState
 import okhttp3.RequestBody
 import retrofit2.HttpException
@@ -138,9 +139,23 @@ class HomeRepository @Inject constructor(private val api: ApiInterface, private 
         branchId:String,
         organizationId:String,
         tenantId:String,
-    )  {
-        api.getSupportContact(
-            apiKey, branchId, organizationId, tenantId
-        )
+    ) : DataState<BrandInfoModel> {
+
+        return try {
+            val response = api.getSupportContact(
+                apiKey, branchId, organizationId, tenantId
+            )
+            if (response.isSuccessful && response.body() != null) {
+                DataState.Success(response.body()!!)
+            } else {
+                DataState.Error("Error ${response.code()}: ${response.message()}")
+            }
+        } catch (e: IOException) {
+            DataState.Error("Network error: ${e.message}")
+        } catch (e: HttpException) {
+            DataState.Error("HTTP error: ${e.message}")
+        } catch (e: Exception) {
+            DataState.Error("Unknown error: ${e.message}")
+        }
     }
 }

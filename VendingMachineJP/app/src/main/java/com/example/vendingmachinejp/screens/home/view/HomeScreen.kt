@@ -1,5 +1,6 @@
 package com.example.vendingmachinejp.screens.home.view
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,47 +27,59 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.ordermonkey.roomDB.viewmodel.ProductViewModel
 import com.example.vendingmachinejp.R
 import com.example.vendingmachinejp.base.AppConstants
 import com.example.vendingmachinejp.navigation.Screen
+import com.example.vendingmachinejp.roomDB.model.ProductCartModel
 import com.example.vendingmachinejp.screens.home.model.CategoryProduct
 import com.example.vendingmachinejp.screens.home.model.Data
 import com.example.vendingmachinejp.screens.splash.viewmodel.SplashViewModel
 import com.example.vendingmachinejp.screens.videoItems.model.ReelsVideoData
 import com.example.vendingmachinejp.screens.videoItems.view.AutoPlayVideoLazyRow
 import com.example.vendingmachinejp.utils.DataStorePref
+import com.example.vendingmachinejp.utils.HorizontalLine
 import com.example.vendingmachinejp.utils.TextUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
+
 @Composable
-fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hiltViewModel()) {
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: SplashViewModel = hiltViewModel(),
+    productViewModel: ProductViewModel = hiltViewModel()
+) {
     val adData = viewModel.adData
     val productData = viewModel.categoryData
     val isLoading = viewModel.isLoading
@@ -72,12 +87,13 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
     val error = viewModel.errorMessage
     val productError = viewModel.productErrorMessage
     val context = LocalContext.current
+    val pref = DataStorePref(context)
     val coroutineScope = rememberCoroutineScope()
 
     var adList = remember { mutableListOf<ReelsVideoData>() }
     var dataList = remember { mutableListOf<Data>() }
 
-    val pref = DataStorePref(context)
+
 
     LaunchedEffect(Unit) {
 
@@ -100,6 +116,8 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
                         getTenantId(),
                         AppConstants.TAKEAWAY, "true", true
                     )
+
+
                 }
             }
         } else {
@@ -158,7 +176,7 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
                 }
             }
 
-            ShowData(adList, dataList, navController)
+            ShowData(adList, dataList, navController,productViewModel)
 
 
         }
@@ -171,7 +189,7 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
             }
         }
 
-        error != null -> {
+        productError != null -> {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -179,7 +197,7 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = error, color = Color.Red)
+                Text(text = productError, color = Color.Red)
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(onClick = {
                     coroutineScope.launch {
@@ -228,7 +246,7 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
 
             productData.data.let { dataList.addAll(it) }
 
-            ShowData(adList, dataList, navController)
+            ShowData(adList, dataList, navController, productViewModel)
 
         }
     }
@@ -239,12 +257,16 @@ fun HomeScreen(navController: NavHostController, viewModel: SplashViewModel = hi
 private fun ShowData(
     adList: MutableList<ReelsVideoData>,
     dataList: MutableList<Data>,
-    navController: NavHostController
+    navController: NavHostController,
+    productViewModel: ProductViewModel,
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
 
-    var productList = remember { mutableStateListOf<CategoryProduct>() }
+    var selectedCatId by remember { mutableStateOf("") }
 
+    val productList = remember(dataList, selectedIndex) {
+        dataList.getOrNull(selectedIndex)?.categoryProducts ?: emptyList()
+    }
 
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -252,8 +274,9 @@ private fun ShowData(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-        ) {
+                .aspectRatio(2f / 1.2f)
+        )
+        {
             AutoPlayVideoLazyRow(
                 adList,
                 navController,
@@ -268,22 +291,24 @@ private fun ShowData(
                 .fillMaxWidth()
                 .background(TextUtils.hexToColor("#F4F3F2"))
 
-        ) {
+        )
+        {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
-            ) {
+            )
+            {
                 itemsIndexed(items = dataList) { index, product ->
+                    selectedCatId = product.categoryId.toString()
                     Card(
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(12.dp)
+                            .padding(8.dp)
                             .clickable(
                                 indication = null, // disables ripple animation
                                 interactionSource = remember { MutableInteractionSource() }
                             ) {
                                 selectedIndex = index
-
 
 
                             },
@@ -321,7 +346,7 @@ private fun ShowData(
                                 color = if (product.isSelected) TextUtils.hexToColor("#000000") else TextUtils.hexToColor(
                                     "#8a8a8a"
                                 ),
-                                fontSize = 11.sp,
+                                fontSize = 9.sp,
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
@@ -330,78 +355,369 @@ private fun ShowData(
             }
         }
 
-        ProductView(dataList[selectedIndex].categoryProducts)
+        ProductView(productList,productViewModel,selectedCatId)
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun ProductView(categoryProducts: List<CategoryProduct>) {
+fun ProductView(
+    categoryProducts: List<CategoryProduct>,
+    productViewModel: ProductViewModel,
+    selectedCatId: String
+) {
+    Log.d("CheckProduct", "ProductView: ${Gson().toJson(categoryProducts)}")
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val pref = DataStorePref(context)
+
+    var currency by remember { mutableStateOf("") }
+    var langCode by remember { mutableStateOf("") }
+
+    val cartList by productViewModel.products.collectAsState()
+
+    Log.d("CheckCartList", "${Gson().toJson(cartList)}" )
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            currency = pref.getCurrency()
+            langCode = pref.getLanguage()
+
+            Log.d("LaunchCgeck", "ProductView: ${pref.getCurrency()}")
+
+        }
+    }
 
     Box(modifier = Modifier.background(color = TextUtils.hexToColor("#FAF9F9"))) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             LazyVerticalGrid(
-                modifier = Modifier.padding(
-                    start = 6.dp,
-                    end = 6.dp,
-                    top = 2.dp,
-                    bottom = 2.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .padding(
+                        start = 6.dp,
+                        end = 6.dp,
+                        top = 2.dp,
+                        bottom = 2.dp
+                    ),
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(4.dp)
-            ) { 
-              items(categoryProducts) { product ->
-                  Card(modifier = Modifier
-                      .fillMaxSize()
-                      .border(
-                          width = 1.dp,
-                          color = TextUtils.hexToColor("#F4F3F2"),
-                          shape = RoundedCornerShape(6.dp)
-                      )
-                  ) {
+            )
+            {
+                items(categoryProducts) { product ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(4.dp)
+                            .border(
+                                width = 1.dp,
+                                color = TextUtils.hexToColor("#F4F3F2"),
+                                shape = RoundedCornerShape(6.dp)
+                            )
+                            .background(color = Color.White)
+                            .clickable {
+                                product.apply {
+                                    productViewModel.insertUser(
 
-                      Column(modifier = Modifier.fillMaxSize()) {
-                          AsyncImage(
-                              model = product.medias?.get(0)?.thumbnailFileUrl,
-                              contentDescription = null,
-                              contentScale = ContentScale.Crop,
-                              modifier = Modifier
-                                  .fillMaxWidth()
-                                  .aspectRatio(1.17f) // 1.17:1 aspect ratio
-                                  .clip(RoundedCornerShape(8.dp))
-                          )
+                                        ProductCartModel(
+                                            0,
+                                            productId.toString(),
+                                            productName.toString(),
+                                            vendingMachineSlotDetails?.get(0)?.slotNumber ?: 0,
+                                            vendingMachineSlotDetails?.get(0)?.slotId ?: "",
+                                            discountPrice ?: 0.0,
+                                            discountPrice ?: 0.0,
+                                            normalPrice ?: 0.0,
+                                            1,
+                                            medias?.get(0)?.thumbnailFileUrl,
+                                            selectedCatId,
+                                            product.ingredients ?: "",
+                                            vendingMachineSlotDetails?.get(0)?.filledItemCount ?: 1,
+                                            0.0
+                                        )
+                                    )
+                                }
+                            },
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    )
+                    {
 
-                          Text(
-                              modifier = Modifier.padding(
-                                  start = 4.dp,
-                                  top = 2.dp,
-                              ),
-                              text = TextUtils.languageTextConvert(
-                                  product.productName.toString(),
-                                  "en"
-                              ),
-                              fontSize = 11.sp,
-                              style = MaterialTheme.typography.titleLarge
-                          )
+                        Box (modifier = Modifier
+                            .fillMaxSize()){
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color = Color.White)
+                                    .padding(4.dp)
+                            )
+                            {
+                                AsyncImage(
+                                    model = product.medias?.get(0)?.thumbnailFileUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1.17f) // 1.17:1 aspect ratio
+//                                  .clip(RoundedCornerShape(8.dp))
+                                )
 
-                          Text(
-                              modifier = Modifier.padding(
-                                  start = 4.dp,
-                                  top = 2.dp,
-                                  ),
-                              text = TextUtils.languageTextConvert(
-                                  product.productName.toString(),
-                                  "en"
-                              ),
-                              fontSize = 8.sp,
-                              style = MaterialTheme.typography.bodyMedium,
-                              color = TextUtils.hexToColor("#8a8a8a")
-                          )
-                      }
+                                Text(
+                                    modifier = Modifier.padding(
+                                        start = 4.dp,
+                                        top = 2.dp,
+                                    ),
+                                    text = if (product.productName?.contains("\"") == true)
+                                        TextUtils.languageTextConvert(
+                                            product.productName.toString(),
+                                            langCode
+                                        ) else product.productName.toString(),
+                                    fontSize = 10.sp,
+                                    color = TextUtils.hexToColor("#212121"),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
 
-                  }
-              }
+                                )
+
+                                Text(
+                                    modifier = Modifier.padding(
+                                        start = 4.dp,
+                                    ),
+                                    text =
+                                        if (product.ingredients?.contains("\"") == true)
+                                            TextUtils.languageTextConvert(
+                                                product.ingredients.toString(),
+                                                langCode
+                                            ) else product.ingredients.toString(),
+                                    fontSize = 7.sp,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TextUtils.hexToColor("#8a8a8a")
+                                )
+
+                                Row(
+                                    modifier = Modifier.padding(
+                                        start = 0.dp,
+                                    ),
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(
+                                            start = 2.dp,
+                                            top = 2.dp,
+                                        ),
+                                        text = "$currency ${
+                                            String.format(
+                                                "%.2f",
+                                                product.discountPrice
+                                            )
+                                        }",
+                                        fontSize = 9.sp,
+                                        color = TextUtils.hexToColor("#212121"),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    if (product.normalPrice != product.discountPrice) {
+                                        Box(
+                                            modifier = Modifier.padding(
+                                                start = 2.dp,
+                                                top = 2.dp,
+                                            ),
+                                        ) {
+                                            Text(
+                                                text = "$currency ${
+                                                    String.format(
+                                                        "%.2f",
+                                                        product.normalPrice
+                                                    )
+                                                }",
+                                                fontSize = 9.sp,
+                                                color = TextUtils.hexToColor("#4D4D4C"),
+                                                style = MaterialTheme.typography.titleLarge,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            if (cartList.isNotEmpty()){
+                                if (cartList.any { it.productId == product.productId }){
+
+                                    AsyncImage(
+                                        model = R.drawable.selected_product,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                       modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .padding(4.dp)
+                                           .width(14.dp)
+                                           .height(14.dp)
+
+                                    )
+
+
+
+                                }
+                            }
+                        }
+
+                    }
+                }
             }
+
+            CartView(cartList)
         }
     }
 
 }
+
+@Composable
+fun CartView(cartList: List<ProductCartModel>) {
+
+    Column(
+        modifier = Modifier
+            .width(125.dp)
+            .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+
+    )
+    {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.Black)
+                .padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 4.dp,
+                    bottom = 4.dp
+                ),
+            text = "Your Items",
+            fontSize = 8.sp,
+            color = TextUtils.hexToColor("#FFFFFF"),
+            style = MaterialTheme.typography.titleLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            AsyncImage(
+                model = R.drawable.empty,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(32.dp)
+                    .aspectRatio(1.1f)
+            )
+            Text(
+                modifier = Modifier.padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 4.dp,
+                    bottom = 8.dp
+                ),
+                text = "Cart is Empty!",
+                fontSize = 9.sp,
+                color = TextUtils.hexToColor("#212121"),
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+
+            )
+            Text(
+                text = "You haven’t added anything to your cart!",
+                fontSize = 7.sp,
+                textAlign = TextAlign.Center,
+                color = TextUtils.hexToColor("#8a8a8a"),
+                style = MaterialTheme.typography.bodyMedium,
+
+
+            )
+        }
+
+        HorizontalLine(TextUtils.hexToColor("#E5E4E3"), 1.dp, Modifier.fillMaxWidth())
+
+        Text(
+            modifier = Modifier.padding(
+                start = 8.dp,
+                end = 8.dp,
+                top = 8.dp,
+                bottom = 4.dp
+            ),
+            text = "CHF 16.00",
+            fontSize = 11.sp,
+            textAlign = TextAlign.Center,
+            color = TextUtils.hexToColor("#000000"),
+            style = MaterialTheme.typography.titleLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            modifier = Modifier.padding(
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 4.dp
+            ),
+            text = "(Vat Included)",
+            textAlign = TextAlign.Center,
+            fontSize = 6.sp,
+            color = TextUtils.hexToColor("#4D4D4C"),
+            style = MaterialTheme.typography.bodyMedium,
+
+            )
+
+        Button(
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 8.dp,
+                    end = 8.dp,
+                    top = 8.dp,
+                    bottom = 4.dp
+                ),
+
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red
+            ),
+            shape = RoundedCornerShape(10.dp)
+
+
+
+        ) {
+            Text(
+                text = "Pay Now",
+                color = Color.White,
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 10.sp
+            )
+        }
+
+        HorizontalLine(TextUtils.hexToColor("#E5E4E3"), 1.dp, Modifier.fillMaxWidth())
+
+        AsyncImage(
+            model = R.drawable.order_monkey,
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .aspectRatio(1f / 1.5f)
+        )
+    }
+}
+
+
 

@@ -96,6 +96,10 @@ dependencies {
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
 
+    // room
+    implementation (libs.androidx.room.runtime)
+    implementation (libs.androidx.room.ktx)
+    kapt (libs.androidx.room.compiler)
 
 
 // Core ExoPlayer

@@ -4,6 +4,7 @@ import com.example.vendingmachinejp.base.AppConstants
 import com.example.vendingmachinejp.screens.splash.model.AdListModel
 import com.example.vendingmachinejp.screens.addKiosk.model.AddKioskModel
 import com.example.vendingmachinejp.screens.home.model.CategoryWiseProductModel
+import com.example.vendingmachinejp.screens.splash.model.BrandInfoModel
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -84,5 +85,5 @@ interface ApiInterface {
         @Header("BranchId") branchId:String,
         @Header("OrganizationId") organizationId:String,
         @Header("TenantId") tenantId:String,
-    ): Response<ResponseBody>
+    ): Response<BrandInfoModel>
 }
