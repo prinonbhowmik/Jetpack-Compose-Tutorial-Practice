@@ -375,6 +375,8 @@ fun ProductView(
     var currency by remember { mutableStateOf("") }
     var langCode by remember { mutableStateOf("") }
 
+
+
     val cartList by productViewModel.products.collectAsState()
 
     Log.d("CheckCartList", "${Gson().toJson(cartList)}" )
@@ -590,6 +592,8 @@ fun CartView(
     productViewModel: ProductViewModel
 ) {
 
+    var btnEnabled by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .width(125.dp)
@@ -618,6 +622,7 @@ fun CartView(
         )
 
        if (cartList.isEmpty()){
+           btnEnabled = false
            Column(
                modifier = Modifier
                    .weight(1f)
@@ -662,6 +667,7 @@ fun CartView(
            }
        }
         else{
+           btnEnabled = true
            LazyColumn (
                modifier = Modifier
                .weight(1f)
@@ -791,7 +797,7 @@ fun CartView(
                 top = 8.dp,
                 bottom = 4.dp
             ),
-            text = "CHF 16.00",
+            text = "$currency ${cartList.sumOf { it.actualPrice }}",
             fontSize = 11.sp,
             textAlign = TextAlign.Center,
             color = TextUtils.hexToColor("#000000"),
@@ -824,9 +830,15 @@ fun CartView(
                     bottom = 4.dp
                 ),
 
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Red
-            ),
+            colors = if (btnEnabled){
+                ButtonDefaults.buttonColors(
+                    containerColor = Color.Red
+                )
+            } else {
+                ButtonDefaults.buttonColors(
+                    containerColor = TextUtils.hexToColor("#E5E4E3")
+                )
+            },
             shape = RoundedCornerShape(10.dp)
 
 
