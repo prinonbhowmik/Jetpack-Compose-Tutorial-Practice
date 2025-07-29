@@ -2,6 +2,7 @@ package com.example.vendingmachinejp.screens.home.view
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,20 +22,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -417,26 +417,33 @@ fun ProductView(
                             )
                             .background(color = Color.White)
                             .clickable {
-                                product.apply {
-                                    productViewModel.insertUser(
+                                if (cartList.sumOf { it.quantity } < 2){
+                                    if (cartList.any { it.productId == product.productId }){
+                                        productViewModel.updateQuantity(product.productId.toString())
+                                    }else{
+                                        product.apply {
+                                            productViewModel.insertUser(
 
-                                        ProductCartModel(
-                                            0,
-                                            productId.toString(),
-                                            productName.toString(),
-                                            vendingMachineSlotDetails?.get(0)?.slotNumber ?: 0,
-                                            vendingMachineSlotDetails?.get(0)?.slotId ?: "",
-                                            discountPrice ?: 0.0,
-                                            discountPrice ?: 0.0,
-                                            normalPrice ?: 0.0,
-                                            1,
-                                            medias?.get(0)?.thumbnailFileUrl,
-                                            selectedCatId,
-                                            product.ingredients ?: "",
-                                            vendingMachineSlotDetails?.get(0)?.filledItemCount ?: 1,
-                                            0.0
-                                        )
-                                    )
+                                                ProductCartModel(
+                                                    0,
+                                                    productId.toString(),
+                                                    productName.toString(),
+                                                    vendingMachineSlotDetails?.get(0)?.slotNumber ?: 0,
+                                                    vendingMachineSlotDetails?.get(0)?.slotId ?: "",
+                                                    discountPrice ?: 0.0,
+                                                    discountPrice ?: 0.0,
+                                                    normalPrice ?: 0.0,
+                                                    1,
+                                                    medias?.get(0)?.thumbnailFileUrl,
+                                                    selectedCatId,
+                                                    product.ingredients ?: "",
+                                                    vendingMachineSlotDetails?.get(0)?.filledItemCount ?: 1,
+                                                    0.0
+                                                )
+                                            )
+                                        }
+                                    }
+
                                 }
                             },
                         elevation = CardDefaults.cardElevation(4.dp)
@@ -569,14 +576,19 @@ fun ProductView(
                 }
             }
 
-            CartView(cartList)
+            CartView(cartList,currency,langCode,productViewModel)
         }
     }
 
 }
 
 @Composable
-fun CartView(cartList: List<ProductCartModel>) {
+fun CartView(
+    cartList: List<ProductCartModel>,
+    currency: String,
+    langCode: String,
+    productViewModel: ProductViewModel
+) {
 
     Column(
         modifier = Modifier
@@ -604,47 +616,170 @@ fun CartView(cartList: List<ProductCartModel>) {
             overflow = TextOverflow.Ellipsis
 
         )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            AsyncImage(
-                model = R.drawable.empty,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .width(32.dp)
-                    .height(32.dp)
-                    .aspectRatio(1.1f)
-            )
-            Text(
-                modifier = Modifier.padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 4.dp,
-                    bottom = 8.dp
-                ),
-                text = "Cart is Empty!",
-                fontSize = 9.sp,
-                color = TextUtils.hexToColor("#212121"),
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
 
-            )
-            Text(
-                text = "You haven’t added anything to your cart!",
-                fontSize = 7.sp,
-                textAlign = TextAlign.Center,
-                color = TextUtils.hexToColor("#8a8a8a"),
-                style = MaterialTheme.typography.bodyMedium,
+       if (cartList.isEmpty()){
+           Column(
+               modifier = Modifier
+                   .weight(1f)
+                   .fillMaxHeight(),
+               verticalArrangement = Arrangement.Center,
+               horizontalAlignment = Alignment.CenterHorizontally
+           )
+           {
+               AsyncImage(
+                   model = R.drawable.empty,
+                   contentDescription = null,
+                   contentScale = ContentScale.Crop,
+                   modifier = Modifier
+                       .width(32.dp)
+                       .height(32.dp)
+                       .aspectRatio(1.1f)
+               )
+               Text(
+                   modifier = Modifier.padding(
+                       start = 8.dp,
+                       end = 8.dp,
+                       top = 4.dp,
+                       bottom = 8.dp
+                   ),
+                   text = "Cart is Empty!",
+                   fontSize = 9.sp,
+                   color = TextUtils.hexToColor("#212121"),
+                   style = MaterialTheme.typography.titleLarge,
+                   maxLines = 1,
+                   overflow = TextOverflow.Ellipsis
+
+               )
+               Text(
+                   text = "You haven’t added anything to your cart!",
+                   fontSize = 7.sp,
+                   textAlign = TextAlign.Center,
+                   color = TextUtils.hexToColor("#8a8a8a"),
+                   style = MaterialTheme.typography.bodyMedium,
 
 
-            )
+                   )
+           }
+       }
+        else{
+           LazyColumn (
+               modifier = Modifier
+               .weight(1f)
+               .fillMaxHeight(),
+               verticalArrangement = Arrangement.Top,
+               horizontalAlignment = Alignment.CenterHorizontally
+           )
+           {
+               itemsIndexed(
+                   items = cartList
+               ) { index, product ->
+                   Column(modifier = Modifier.padding(2.dp)) {
+                       Row(modifier = Modifier.fillMaxSize().padding(2.dp)) {
+                           AsyncImage(
+                               model = product.productImage,
+                               contentDescription = null,
+                               contentScale = ContentScale.Crop,
+                               modifier = Modifier
+                                   .width(30.dp)
+                                   .height(30.dp)
+                                   .border(
+                                       1.dp,
+                                       TextUtils.hexToColor("#e5e4e3"),
+                                       RoundedCornerShape(8.dp))
+                                   .padding(6.dp)
+                           )
+
+                           Column {
+                               Text(
+                                   modifier = Modifier.padding(
+                                       start = 2.dp
+                                   ),
+                                   text = TextUtils.languageTextConvert(product.productName,"en"),
+                                   fontSize = 7.sp,
+                                   textAlign = TextAlign.Start,
+                                   color = TextUtils.hexToColor("#212121"),
+                                   style = MaterialTheme.typography.titleLarge,
+                                   maxLines = 1,
+                                   overflow = TextOverflow.Ellipsis
+                               )
+                               Text(
+                                   modifier = Modifier.padding(
+                                       start= 2.dp
+                                   ),
+                                   text = TextUtils.languageTextConvert(product.variation,langCode),
+                                   fontSize = 6.sp,
+                                   textAlign = TextAlign.Start,
+                                   color = TextUtils.hexToColor("#8a8a8a"),
+                                   style = MaterialTheme.typography.bodyMedium,
+                                   maxLines = 1,
+                                   overflow = TextOverflow.Ellipsis
+                               )
+                               Text(
+                                   modifier = Modifier.padding(
+                                       start= 2.dp
+                                   ),
+                                   text = "$currency ${String.format("%.2f",product.actualPrice)}",
+                                   fontSize = 7.sp,
+                                   textAlign = TextAlign.Start,
+                                   color = TextUtils.hexToColor("#212121"),
+                                   style = MaterialTheme.typography.titleLarge,
+                                   maxLines = 1,
+                                   overflow = TextOverflow.Ellipsis
+                               )
+                           }
+                       }
+
+                       Row (modifier = Modifier.fillMaxWidth().padding(start = 2.dp, end = 2.dp)
+                           .border(
+                               1.dp,
+                               TextUtils.hexToColor("#e5e4e3"),
+                               RoundedCornerShape(4.dp)),
+                           verticalAlignment = Alignment.CenterVertically,
+                           horizontalArrangement = Arrangement.SpaceBetween){
+                           if (product.quantity > 1){
+                               Image(
+                                   painter = painterResource(id = R.drawable.ic_minus_red),
+                                   contentDescription = null,
+                                   modifier = Modifier.size(18.dp).padding(4.dp)
+                                       .clickable{
+                                           productViewModel.decreaseQuantity(product.productId)
+                                       }
+                               )
+                           }else{
+                               Image(
+                                   painter = painterResource(id = R.drawable.delete_red),
+                                   contentDescription = null,
+                                   modifier = Modifier
+                                       .size(18.dp)
+                                       .padding(4.dp)
+                                       .clickable{
+                                          productViewModel.deleteUser(product)
+                                       }
+                               )
+                           }
+                           Text(
+                               text = product.quantity.toString(),
+                               fontSize = 7.sp,
+
+                               color = TextUtils.hexToColor("#212121"),
+                               style = MaterialTheme.typography.titleLarge,
+                               maxLines = 1,
+                               overflow = TextOverflow.Ellipsis
+                           )
+
+                           Image(
+                               painter = painterResource(id = R.drawable.ic_plus_red),
+                               contentDescription = null,
+                               modifier = Modifier.size(18.dp).padding(4.dp)
+                                   .clickable{
+                                       productViewModel.updateQuantity(product.productId)
+                                   }
+                           )
+                       }
+                   }
+               }
+
+           }
         }
 
         HorizontalLine(TextUtils.hexToColor("#E5E4E3"), 1.dp, Modifier.fillMaxWidth())
