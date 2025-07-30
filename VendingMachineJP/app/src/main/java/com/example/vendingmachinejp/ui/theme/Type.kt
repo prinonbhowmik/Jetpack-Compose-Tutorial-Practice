@@ -26,44 +26,40 @@ val Typography = Typography(
         fontFamily = spaceGrotesk,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+
     ),
     /* Other default text styles to override*/
     titleLarge = TextStyle(
         fontFamily = spaceGrotesk,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+
     ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = spaceGrotesk,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.0.sp
     ),
     displayLarge = TextStyle(
-        fontFamily = manpore,
-        fontWeight = FontWeight.Bold,
+        fontFamily = spaceGrotesk,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = manpore,
+        fontFamily = spaceGrotesk,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
     displaySmall = TextStyle(
-        fontFamily = manpore,
+        fontFamily = spaceGrotesk,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
     ),
 
 )

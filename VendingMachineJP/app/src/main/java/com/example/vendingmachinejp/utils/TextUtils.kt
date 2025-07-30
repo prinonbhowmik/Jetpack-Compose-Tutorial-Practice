@@ -20,6 +20,9 @@ class TextUtils {
             return Color(android.graphics.Color.parseColor(formattedHex))
         }
 
+        fun responsiveSdp(){
+
+        }
 
     }
 }

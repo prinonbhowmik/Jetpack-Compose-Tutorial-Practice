@@ -2,7 +2,6 @@ package com.example.vendingmachinejp.screens.home.view
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,7 +28,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,8 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,7 +63,6 @@ import com.example.vendingmachinejp.screens.splash.viewmodel.SplashViewModel
 import com.example.vendingmachinejp.screens.videoItems.model.ReelsVideoData
 import com.example.vendingmachinejp.screens.videoItems.view.AutoPlayVideoLazyRow
 import com.example.vendingmachinejp.utils.DataStorePref
-import com.example.vendingmachinejp.utils.HorizontalLine
 import com.example.vendingmachinejp.utils.TextUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -375,7 +369,7 @@ fun ProductView(
     var currency by remember { mutableStateOf("") }
     var langCode by remember { mutableStateOf("") }
 
-
+    val shouldShowDialog = remember { mutableStateOf(false) }
 
     val cartList by productViewModel.products.collectAsState()
 
@@ -389,6 +383,13 @@ fun ProductView(
             Log.d("LaunchCgeck", "ProductView: ${pref.getCurrency()}")
 
         }
+    }
+    if (shouldShowDialog.value) {
+        ProductDialog(
+            shouldShowDialog = shouldShowDialog,
+            "you can add maximum 2 products at a time."
+
+        )
     }
 
     Box(modifier = Modifier.background(color = TextUtils.hexToColor("#FAF9F9"))) {
@@ -445,6 +446,10 @@ fun ProductView(
                                             )
                                         }
                                     }
+
+                                }
+                                else{
+                                    shouldShowDialog.value = true
 
                                 }
                             },
@@ -578,19 +583,20 @@ fun ProductView(
                 }
             }
 
-            CartView(cartList,currency,langCode,productViewModel)
+            CartScreen(cartList,currency,langCode,productViewModel)
         }
     }
 
 }
 
-@Composable
+/*@Composable
 fun CartView(
     cartList: List<ProductCartModel>,
     currency: String,
     langCode: String,
     productViewModel: ProductViewModel
-) {
+)
+{
 
     var btnEnabled by remember { mutableStateOf(false) }
 
@@ -864,7 +870,7 @@ fun CartView(
                 .aspectRatio(1f / 1.5f)
         )
     }
-}
+}*/
 
 
 
