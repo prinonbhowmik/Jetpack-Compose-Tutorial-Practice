@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +65,8 @@ import com.example.vendingmachinejp.screens.videoItems.model.ReelsVideoData
 import com.example.vendingmachinejp.screens.videoItems.view.AutoPlayVideoLazyRow
 import com.example.vendingmachinejp.utils.DataStorePref
 import com.example.vendingmachinejp.utils.TextUtils
+import com.example.vendingmachinejp.utils.TextUtils.Companion.sdp
+import com.example.vendingmachinejp.utils.TextUtils.Companion.sspTextUnit
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
@@ -222,8 +225,6 @@ fun HomeScreen(
                 allProducts.addAll(it.categoryProducts)
             }
 
-
-
             dataList.add(
                 0,
                 Data(
@@ -268,7 +269,7 @@ private fun ShowData(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(2f / 1.2f)
+                .aspectRatio(2f / 1.1f)
         )
         {
             AutoPlayVideoLazyRow(
@@ -297,7 +298,7 @@ private fun ShowData(
                     Card(
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(8.dp)
+                            .padding(dimensionResource(com.intuit.sdp.R.dimen._6sdp))
                             .clickable(
                                 indication = null, // disables ripple animation
                                 interactionSource = remember { MutableInteractionSource() }
@@ -311,12 +312,20 @@ private fun ShowData(
                                 "#F4F3F2"
                             )
                         ),
-                        shape = RoundedCornerShape(26.dp)
+                        shape = RoundedCornerShape(dimensionResource(com.intuit.sdp.R.dimen._20sdp))
                     ) {
-                        Row(modifier = Modifier.padding(8.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .padding(
+                                    start = dimensionResource(com.intuit.sdp.R.dimen._9sdp),
+                                    end = dimensionResource(com.intuit.sdp.R.dimen._9sdp),
+                                    top = dimensionResource(com.intuit.sdp.R.dimen._2sdp),
+                                    bottom = dimensionResource(com.intuit.sdp.R.dimen._2sdp)),
+                            verticalAlignment = Alignment.CenterVertically
+                            ) {
 
                             AsyncImage(
-                                modifier = Modifier.size(22.dp),
+                                modifier = Modifier.size(dimensionResource(com.intuit.sdp.R.dimen._20sdp)),
                                 model =
                                     if (index == 0) R.drawable.all_items
                                     else product.categoryMedias?.getOrNull(
@@ -328,10 +337,8 @@ private fun ShowData(
 
                             Text(
                                 modifier = Modifier.padding(
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                    top = 3.dp,
-                                    bottom = 3.dp
+                                    start = dimensionResource(com.intuit.sdp.R.dimen._2sdp),
+                                    end = dimensionResource(com.intuit.sdp.R.dimen._2sdp),
                                 ),
                                 text = TextUtils.languageTextConvert(
                                     product.categoryName.toString(),
@@ -340,7 +347,7 @@ private fun ShowData(
                                 color = if (product.isSelected) TextUtils.hexToColor("#000000") else TextUtils.hexToColor(
                                     "#8a8a8a"
                                 ),
-                                fontSize = 9.sp,
+                                fontSize = 6.sspTextUnit(),
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
@@ -399,10 +406,10 @@ fun ProductView(
                     .weight(1f)
                     .fillMaxHeight()
                     .padding(
-                        start = 6.dp,
-                        end = 6.dp,
-                        top = 2.dp,
-                        bottom = 2.dp
+                        start = dimensionResource(com.intuit.sdp.R.dimen._5sdp),
+                        end = dimensionResource(com.intuit.sdp.R.dimen._5sdp),
+                        top = dimensionResource(com.intuit.sdp.R.dimen._2sdp),
+                        bottom = dimensionResource(com.intuit.sdp.R.dimen._2sdp)
                     ),
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(4.dp)
@@ -412,11 +419,11 @@ fun ProductView(
                     Card(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(4.dp)
+                            .padding(dimensionResource(com.intuit.sdp.R.dimen._4sdp))
                             .border(
                                 width = 1.dp,
                                 color = TextUtils.hexToColor("#F4F3F2"),
-                                shape = RoundedCornerShape(6.dp)
+                                shape = RoundedCornerShape(dimensionResource(com.intuit.sdp.R.dimen._4sdp))
                             )
                             .background(color = Color.White)
                             .clickable {
@@ -453,7 +460,7 @@ fun ProductView(
 
                                 }
                             },
-                        elevation = CardDefaults.cardElevation(4.dp)
+                        elevation = CardDefaults.cardElevation(2.dp)
                     )
                     {
 
@@ -466,6 +473,13 @@ fun ProductView(
                                     .padding(4.dp)
                             )
                             {
+
+                                Box {
+                                    Card() {
+
+                                    }
+                                }
+
                                 AsyncImage(
                                     model = product.medias?.get(0)?.thumbnailFileUrl,
                                     contentDescription = null,
@@ -486,7 +500,7 @@ fun ProductView(
                                             product.productName.toString(),
                                             langCode
                                         ) else product.productName.toString(),
-                                    fontSize = 10.sp,
+                                    fontSize = 6.sspTextUnit(),
                                     color = TextUtils.hexToColor("#212121"),
                                     style = MaterialTheme.typography.titleLarge,
                                     maxLines = 1,
@@ -504,7 +518,7 @@ fun ProductView(
                                                 product.ingredients.toString(),
                                                 langCode
                                             ) else product.ingredients.toString(),
-                                    fontSize = 7.sp,
+                                    fontSize = 4.sspTextUnit(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = TextUtils.hexToColor("#8a8a8a")
                                 )
@@ -525,7 +539,7 @@ fun ProductView(
                                                 product.discountPrice
                                             )
                                         }",
-                                        fontSize = 9.sp,
+                                        fontSize = 5.sspTextUnit(),
                                         color = TextUtils.hexToColor("#212121"),
                                         style = MaterialTheme.typography.titleLarge,
                                         maxLines = 1,
@@ -589,288 +603,6 @@ fun ProductView(
 
 }
 
-/*@Composable
-fun CartView(
-    cartList: List<ProductCartModel>,
-    currency: String,
-    langCode: String,
-    productViewModel: ProductViewModel
-)
-{
-
-    var btnEnabled by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .width(125.dp)
-            .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-
-    )
-    {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Black)
-                .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 4.dp,
-                    bottom = 4.dp
-                ),
-            text = "Your Items",
-            fontSize = 8.sp,
-            color = TextUtils.hexToColor("#FFFFFF"),
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-
-        )
-
-       if (cartList.isEmpty()){
-           btnEnabled = false
-           Column(
-               modifier = Modifier
-                   .weight(1f)
-                   .fillMaxHeight(),
-               verticalArrangement = Arrangement.Center,
-               horizontalAlignment = Alignment.CenterHorizontally
-           )
-           {
-               AsyncImage(
-                   model = R.drawable.empty,
-                   contentDescription = null,
-                   contentScale = ContentScale.Crop,
-                   modifier = Modifier
-                       .width(32.dp)
-                       .height(32.dp)
-                       .aspectRatio(1.1f)
-               )
-               Text(
-                   modifier = Modifier.padding(
-                       start = 8.dp,
-                       end = 8.dp,
-                       top = 4.dp,
-                       bottom = 8.dp
-                   ),
-                   text = "Cart is Empty!",
-                   fontSize = 9.sp,
-                   color = TextUtils.hexToColor("#212121"),
-                   style = MaterialTheme.typography.titleLarge,
-                   maxLines = 1,
-                   overflow = TextOverflow.Ellipsis
-
-               )
-               Text(
-                   text = "You haven’t added anything to your cart!",
-                   fontSize = 7.sp,
-                   textAlign = TextAlign.Center,
-                   color = TextUtils.hexToColor("#8a8a8a"),
-                   style = MaterialTheme.typography.bodyMedium,
-
-
-                   )
-           }
-       }
-        else{
-           btnEnabled = true
-           LazyColumn (
-               modifier = Modifier
-               .weight(1f)
-               .fillMaxHeight(),
-               verticalArrangement = Arrangement.Top,
-               horizontalAlignment = Alignment.CenterHorizontally
-           )
-           {
-               itemsIndexed(
-                   items = cartList
-               ) { index, product ->
-                   Column(modifier = Modifier.padding(2.dp)) {
-                       Row(modifier = Modifier.fillMaxSize().padding(2.dp)) {
-                           AsyncImage(
-                               model = product.productImage,
-                               contentDescription = null,
-                               contentScale = ContentScale.Crop,
-                               modifier = Modifier
-                                   .width(30.dp)
-                                   .height(30.dp)
-                                   .border(
-                                       1.dp,
-                                       TextUtils.hexToColor("#e5e4e3"),
-                                       RoundedCornerShape(8.dp))
-                                   .padding(6.dp)
-                           )
-
-                           Column {
-                               Text(
-                                   modifier = Modifier.padding(
-                                       start = 2.dp
-                                   ),
-                                   text = TextUtils.languageTextConvert(product.productName,"en"),
-                                   fontSize = 7.sp,
-                                   textAlign = TextAlign.Start,
-                                   color = TextUtils.hexToColor("#212121"),
-                                   style = MaterialTheme.typography.titleLarge,
-                                   maxLines = 1,
-                                   overflow = TextOverflow.Ellipsis
-                               )
-                               Text(
-                                   modifier = Modifier.padding(
-                                       start= 2.dp
-                                   ),
-                                   text = TextUtils.languageTextConvert(product.variation,langCode),
-                                   fontSize = 6.sp,
-                                   textAlign = TextAlign.Start,
-                                   color = TextUtils.hexToColor("#8a8a8a"),
-                                   style = MaterialTheme.typography.bodyMedium,
-                                   maxLines = 1,
-                                   overflow = TextOverflow.Ellipsis
-                               )
-                               Text(
-                                   modifier = Modifier.padding(
-                                       start= 2.dp
-                                   ),
-                                   text = "$currency ${String.format("%.2f",product.actualPrice)}",
-                                   fontSize = 7.sp,
-                                   textAlign = TextAlign.Start,
-                                   color = TextUtils.hexToColor("#212121"),
-                                   style = MaterialTheme.typography.titleLarge,
-                                   maxLines = 1,
-                                   overflow = TextOverflow.Ellipsis
-                               )
-                           }
-                       }
-
-                       Row (modifier = Modifier.fillMaxWidth().padding(start = 2.dp, end = 2.dp)
-                           .border(
-                               1.dp,
-                               TextUtils.hexToColor("#e5e4e3"),
-                               RoundedCornerShape(4.dp)),
-                           verticalAlignment = Alignment.CenterVertically,
-                           horizontalArrangement = Arrangement.SpaceBetween){
-                           if (product.quantity > 1){
-                               Image(
-                                   painter = painterResource(id = R.drawable.ic_minus_red),
-                                   contentDescription = null,
-                                   modifier = Modifier.size(18.dp).padding(4.dp)
-                                       .clickable{
-                                           productViewModel.decreaseQuantity(product.productId)
-                                       }
-                               )
-                           }else{
-                               Image(
-                                   painter = painterResource(id = R.drawable.delete_red),
-                                   contentDescription = null,
-                                   modifier = Modifier
-                                       .size(18.dp)
-                                       .padding(4.dp)
-                                       .clickable{
-                                          productViewModel.deleteUser(product)
-                                       }
-                               )
-                           }
-                           Text(
-                               text = product.quantity.toString(),
-                               fontSize = 7.sp,
-
-                               color = TextUtils.hexToColor("#212121"),
-                               style = MaterialTheme.typography.titleLarge,
-                               maxLines = 1,
-                               overflow = TextOverflow.Ellipsis
-                           )
-
-                           Image(
-                               painter = painterResource(id = R.drawable.ic_plus_red),
-                               contentDescription = null,
-                               modifier = Modifier.size(18.dp).padding(4.dp)
-                                   .clickable{
-                                       productViewModel.updateQuantity(product.productId)
-                                   }
-                           )
-                       }
-                   }
-               }
-
-           }
-        }
-
-        HorizontalLine(TextUtils.hexToColor("#E5E4E3"), 1.dp, Modifier.fillMaxWidth())
-
-        Text(
-            modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-                top = 8.dp,
-                bottom = 4.dp
-            ),
-            text = "$currency ${cartList.sumOf { it.actualPrice }}",
-            fontSize = 11.sp,
-            textAlign = TextAlign.Center,
-            color = TextUtils.hexToColor("#000000"),
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 4.dp
-            ),
-            text = "(Vat Included)",
-            textAlign = TextAlign.Center,
-            fontSize = 6.sp,
-            color = TextUtils.hexToColor("#4D4D4C"),
-            style = MaterialTheme.typography.bodyMedium,
-
-            )
-
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 8.dp,
-                    bottom = 4.dp
-                ),
-
-            colors = if (btnEnabled){
-                ButtonDefaults.buttonColors(
-                    containerColor = Color.Red
-                )
-            } else {
-                ButtonDefaults.buttonColors(
-                    containerColor = TextUtils.hexToColor("#E5E4E3")
-                )
-            },
-            shape = RoundedCornerShape(10.dp)
-
-
-
-        ) {
-            Text(
-                text = "Pay Now",
-                color = Color.White,
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 10.sp
-            )
-        }
-
-        HorizontalLine(TextUtils.hexToColor("#E5E4E3"), 1.dp, Modifier.fillMaxWidth())
-
-        AsyncImage(
-            model = R.drawable.order_monkey,
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-                .aspectRatio(1f / 1.5f)
-        )
-    }
-}*/
 
 
 

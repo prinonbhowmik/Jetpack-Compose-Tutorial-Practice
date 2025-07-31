@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -79,7 +80,7 @@ fun CartScreen(
 
     Column(
         modifier = Modifier
-            .width(125.dp)
+            .width(dimensionResource(id = com.intuit.sdp.R.dimen._85sdp))
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -91,10 +92,10 @@ fun CartScreen(
                 .fillMaxWidth()
                 .background(color = Color.Black)
                 .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 4.dp,
-                    bottom = 4.dp
+                    start = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                    end = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                    top = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp),
+                    bottom = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp)
                 ),
             text = "Your Items",
             fontSize = 8.sp,
@@ -126,10 +127,10 @@ fun CartScreen(
                 )
                 Text(
                     modifier = Modifier.padding(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = 4.dp,
-                        bottom = 8.dp
+                        start = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                        end = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                        top = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp),
+                        bottom = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp)
                     ),
                     text = "Cart is Empty!",
                     fontSize = 9.sp,
@@ -176,7 +177,7 @@ fun CartScreen(
                                     .border(
                                         1.dp,
                                         TextUtils.hexToColor("#e5e4e3"),
-                                        RoundedCornerShape(8.dp)
+                                        RoundedCornerShape(dimensionResource(id = com.intuit.sdp.R.dimen._8sdp))
                                     )
                                     .padding(6.dp)
                             )
@@ -236,7 +237,7 @@ fun CartScreen(
                                 .border(
                                     1.dp,
                                     TextUtils.hexToColor("#e5e4e3"),
-                                    RoundedCornerShape(4.dp)
+                                    RoundedCornerShape(dimensionResource(id = com.intuit.sdp.R.dimen._4sdp))
                                 ),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -246,8 +247,8 @@ fun CartScreen(
                                     painter = painterResource(id = R.drawable.ic_minus_red),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(18.dp)
-                                        .padding(4.dp)
+                                        .size(dimensionResource(id = com.intuit.sdp.R.dimen._14sdp))
+                                        .padding(dimensionResource(id = com.intuit.sdp.R.dimen._4sdp))
                                         .clickable {
                                             productViewModel.decreaseQuantity(product.productId)
                                         }
@@ -257,8 +258,8 @@ fun CartScreen(
                                     painter = painterResource(id = R.drawable.delete_red),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(18.dp)
-                                        .padding(4.dp)
+                                        .size(dimensionResource(id = com.intuit.sdp.R.dimen._14sdp))
+                                        .padding(dimensionResource(id = com.intuit.sdp.R.dimen._4sdp))
                                         .clickable {
                                             selectedItem = product
                                             showDeleteDialog.value = true
@@ -280,8 +281,8 @@ fun CartScreen(
                                 painter = painterResource(id = R.drawable.ic_plus_red),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(18.dp)
-                                    .padding(4.dp)
+                                    .size(dimensionResource(id = com.intuit.sdp.R.dimen._14sdp))
+                                    .padding(dimensionResource(id = com.intuit.sdp.R.dimen._4sdp))
                                     .clickable {
                                         if (cartList.sumOf { it.quantity } < 2) {
                                             productViewModel.updateQuantity(product.productId)
@@ -302,10 +303,10 @@ fun CartScreen(
 
         Text(
             modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-                top = 8.dp,
-                bottom = 4.dp
+                start = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                end = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                top = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                bottom = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp)
             ),
             text = "$currency ${cartList.sumOf { it.actualPrice }}",
             fontSize = 11.sp,
@@ -317,9 +318,9 @@ fun CartScreen(
         )
         Text(
             modifier = Modifier.padding(
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 4.dp
+                start = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                end = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                bottom = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp)
             ),
             text = "(Vat Included)",
             textAlign = TextAlign.Center,
@@ -334,10 +335,10 @@ fun CartScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 8.dp,
-                    bottom = 4.dp
+                    start = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                    end = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                    top = dimensionResource(id = com.intuit.sdp.R.dimen._8sdp),
+                    bottom = dimensionResource(id = com.intuit.sdp.R.dimen._4sdp)
                 ),
 
             colors = if (btnEnabled) {
